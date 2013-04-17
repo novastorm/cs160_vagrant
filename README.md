@@ -16,7 +16,7 @@ Directory Listing:
 
 Add CS 160 project repo
 =======================
- git submodule add git@github.com:dimaj/moocs.git moocs
+ git clone git@github.com:dimaj/moocs.git moocs
 : This adds the repo as the moocs directory
 
 Run the image
