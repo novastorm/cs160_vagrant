@@ -19,11 +19,24 @@ class debconf {
     exec { 'MySQL_root_PW_confirm':
         command => "echo mysql-server-5.5 mysql-server/root_password_again select ${MySQL_password} | debconf-set-selections"
     }
+
+    exec { 'PHPMyAdmin webserver':
+        command => "echo phpmyadmin phpmyadmin/reconfigure-webserver multiselect apache2 | debconf-set-selections"
+    }
+
+    exec { 'PHPMyAdmin dbconfig':
+        command => "echo phpmyadmin phpmyadmin/dbconfig-install boolean false | debconf-set-selections"
+    }
 }
 
 class services {
     exec { 'Update repositories':
         command => 'apt-get update'
+    }
+
+    notify { 'LAMP server':
+        message => 'Installing packages. This may take a while.'
+        , before => Exec['Install LAMP server']
     }
 
     exec { 'Install LAMP server':
@@ -42,6 +55,12 @@ class services {
         ensure => running
         , enable => true
         , require => Exec['Install LAMP server']
+    }
+
+    package { 'Install PHPMyAdmin':
+        name => 'phpmyadmin'
+        , require => Service['mysql']
+
     }
 }
 
