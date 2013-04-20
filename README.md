@@ -29,9 +29,14 @@ Verify the service
  go to 192.168.33.10 in your web browser
 : If there is an IP conflict, update the IP address in the VagantFile to an open IP address.
 
+Accessing phpmyadmin
+====================
+ 192.168.33.10/phpmyadmin
+
+
 Accessing the VM shell
 ======================
-*vagrant ssh
+* vagrant ssh
 
 Additional vagrant commands
 ===========================
