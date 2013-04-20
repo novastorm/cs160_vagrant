@@ -29,7 +29,7 @@ class debconf {
     }
 }
 
-class services {
+class packages {
     exec { 'Update repositories':
         command => 'apt-get update'
     }
@@ -51,22 +51,27 @@ class services {
         , require => Exec['Update repositories']
     }
 
-    service { 'mysql':
-        ensure => running
-        , enable => true
-        , require => Exec['Install LAMP server']
-    }
-
     package { 'Install PHPMyAdmin':
         name => 'phpmyadmin'
-        , require => Service['mysql']
+        , require => Exec['Install LAMP server']
 
     }
 }
 
+service { 'apache2':
+    ensure => running
+    , enable => true
+}
+
+service { 'mysql':
+    ensure => running
+    , enable => true
+}
+
 class setup {
     exec { 'Add CS 160 user':
-        command => "mysql -u root -p${MySQL_password} -e \"CREATE USER 'cs160'@'localhost' IDENTIFIED BY 'cs160_password'\""
+        command => "mysql -u root -p${MySQL_password} -e \"CREATE USER 'cs160'@'%' IDENTIFIED BY 'cs160_password'\""
+        , require => Service['mysql']
     }
 
     exec { 'Add CS 160 database':
@@ -75,7 +80,7 @@ class setup {
     }
 
     exec { 'Add CS 160 permissions':
-        command => "mysql -u root -p${MySQL_password} -e \"GRANT ALL ON cs160.* TO cs160\""
+        command => "mysql -u root -p${MySQL_password} -e \"GRANT ALL ON cs160.* TO 'cs160'@'%'\""
         , require => Exec['Add CS 160 database']
     }
 
@@ -95,6 +100,7 @@ class setup {
         , ensure => link
         , target => '/etc/apache2/sites-available/cs160'
         , require => File['Add CS 160 virtualhost file']
+        , notify => Service['apache2']
     }
 
     file { 'Add link to site files':
@@ -102,24 +108,22 @@ class setup {
     	, ensure => link
     	, target => '/vagrant/moocs'
     }
-}
 
-class restart {
-    exec { 'Reload Apache':
-        command => 'apache2ctl restart'
+    file { 'Add MySQL configuration':
+        path => '/etc/mysql/my.cnf'
+        , ensure => present
+        , source => '/vagrant/assets/cs160.my.conf'
+        , notify => Service['mysql']
     }
 }
 
 class { 'debconf': }
 
-class { 'services':
+class { 'packages':
     require => Class['debconf']
 }
 
 class { 'setup':
-    require => Class['services']
+    require => Class['packages']
 }
 
-class { 'restart':
-    require => Class['setup']
-}
