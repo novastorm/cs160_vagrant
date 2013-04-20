@@ -31,14 +31,20 @@ Verify the service
 
 Accessing the VM shell
 ======================
- vagrant ssh
+*vagrant ssh
 
 Additional vagrant commands
 ===========================
- vagrant halt - stop the VM
- vagrant suspend - suspend the running VM
- vagrant resume - resume a suspended VM
- vagrant destroy - halt the VM and remove the instance.
+* vagrant halt - stop the VM
+* vagrant suspend - suspend the running VM
+* vagrant resume - resume a suspended VM
+* vagrant destroy - halt the VM and remove the instance.
+
+Authentication
+==============
+* mysql 
+** root ChangeThisInsecurePassword
+** cs160 cs160_password
 
 Note
 ====
