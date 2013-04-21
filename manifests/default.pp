@@ -69,19 +69,24 @@ service { 'mysql':
 }
 
 class setup {
-    exec { 'Add CS 160 user':
+    exec { 'Add mysql user cs160@%':
         command => "mysql -u root -p${MySQL_password} -e \"CREATE USER 'cs160'@'%' IDENTIFIED BY 'cs160_password'\""
         , require => Service['mysql']
     }
 
-    exec { 'Add CS 160 database':
-        command => "mysql -u root -p${MySQL_password} -e \"CREATE DATABASE IF NOT EXISTS cs160\""
-        , require => Exec['Add CS 160 user']
+    exec { 'Add mysql user cs160@localhost':
+        command => "mysql -u root -p${MySQL_password} -e \"CREATE USER 'cs160'@'localhost' IDENTIFIED BY 'cs160_password'\""
+        , require => Service['mysql']
     }
 
-    exec { 'Add CS 160 permissions':
+    exec { 'Add mysql database cs160':
+        command => "mysql -u root -p${MySQL_password} -e \"CREATE DATABASE IF NOT EXISTS cs160\""
+        , require => Exec['Add mysql user cs160@%']
+    }
+
+    exec { 'Grant mysql database cs160 to user cs160':
         command => "mysql -u root -p${MySQL_password} -e \"GRANT ALL ON cs160.* TO 'cs160'@'%'\""
-        , require => Exec['Add CS 160 database']
+        , require => Exec['Add mysql database cs160']
     }
 
     file { 'Disable default virtualhost':
