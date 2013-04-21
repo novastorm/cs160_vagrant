@@ -97,6 +97,8 @@ class setup {
     file { 'Add CS 160 virtualhost file':
     	path => '/etc/apache2/sites-available/cs160'
     	, ensure => present
+        , owner => 'root'
+        , group => 'root'
     	, source => '/vagrant/assets/cs160.virtualhost'
     }
 
@@ -117,6 +119,8 @@ class setup {
     file { 'Add MySQL configuration':
         path => '/etc/mysql/my.cnf'
         , ensure => present
+        , owner => 'root'
+        , group => 'root'
         , source => '/vagrant/assets/cs160.my.conf'
         , notify => Service['mysql']
     }
