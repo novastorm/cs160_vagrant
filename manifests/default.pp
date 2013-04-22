@@ -58,11 +58,6 @@ class packages {
     }
 }
 
-service { 'apache2':
-    ensure => running
-    , enable => true
-}
-
 service { 'mysql':
     ensure => running
     , enable => true
@@ -107,7 +102,6 @@ class setup {
         , ensure => link
         , target => '/etc/apache2/sites-available/cs160'
         , require => File['Add CS 160 virtualhost file']
-        , notify => Service['apache2']
     }
 
     file { 'Add link to site files':
@@ -135,4 +129,10 @@ class { 'packages':
 class { 'setup':
     require => Class['packages']
 }
+
+exec {'restart apache':
+    command => 'apache2ctl restart'
+    , require => Class['setup']
+}
+
 
