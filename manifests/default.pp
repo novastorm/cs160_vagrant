@@ -94,6 +94,7 @@ class setup {
     	, ensure => present
         , owner => 'root'
         , group => 'root'
+        , mode => 0644
     	, source => '/vagrant/assets/cs160.virtualhost'
     }
 
@@ -115,6 +116,7 @@ class setup {
         , ensure => present
         , owner => 'root'
         , group => 'root'
+        , mode => 0644
         , source => '/vagrant/assets/cs160.my.conf'
         , notify => Service['mysql']
     }
